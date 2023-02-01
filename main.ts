@@ -1,4 +1,4 @@
-input.onButtonPressed(Button.A, function () {
+input.onGesture(Gesture.TiltLeft, function () {
     message = "" + message + "."
     music.playTone(262, music.beat(BeatFraction.Half))
 })
@@ -7,10 +7,6 @@ input.onButtonPressed(Button.AB, function () {
 })
 radio.onReceivedString(function (receivedString) {
     basic.showString(receivedString)
-})
-input.onButtonPressed(Button.B, function () {
-    message = "" + message + "_"
-    music.playTone(220, music.beat(BeatFraction.Whole))
 })
 input.onGesture(Gesture.Shake, function () {
     basic.showLeds(`
@@ -22,6 +18,10 @@ input.onGesture(Gesture.Shake, function () {
         `)
     music.playMelody("F F G A - - - - ", 225)
     message = ""
+})
+input.onGesture(Gesture.TiltRight, function () {
+    message = "" + message + "_"
+    music.playTone(220, music.beat(BeatFraction.Whole))
 })
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     let finalmessage = morse_to_string(code,message)
