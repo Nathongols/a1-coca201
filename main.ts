@@ -1,6 +1,39 @@
-
-
-const code = {
+input.onButtonPressed(Button.A, function () {
+    message = "" + message + "."
+    music.playTone(262, music.beat(BeatFraction.Half))
+})
+input.onButtonPressed(Button.AB, function () {
+    message = "" + message + " "
+})
+radio.onReceivedString(function (receivedString) {
+    basic.showString(receivedString)
+})
+input.onButtonPressed(Button.B, function () {
+    message = "" + message + "_"
+    music.playTone(220, music.beat(BeatFraction.Whole))
+})
+input.onGesture(Gesture.Shake, function () {
+    basic.showLeds(`
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        `)
+    music.playMelody("F F G A - - - - ", 225)
+    message = ""
+})
+input.onLogoEvent(TouchButtonEvent.Pressed, function () {
+    let finalmessage = morse_to_string(code,message)
+if (finalmessage.length != 0) {
+        radio.sendString(finalmessage)
+        basic.showString(message)
+    } else {
+        basic.showString("error")
+    }
+})
+let message = ""
+let code = {
     "._" : "A",
     "_..." : "B",
     "_._." : "C",
@@ -28,40 +61,20 @@ const code = {
     "_.__" : "Y",
     "__.." : "Z",
 }
-
-let message = ""
-input.onButtonPressed(Button.A, function on_button_pressed_a() {
-    
-    message = "" + message + "."
-    music.playTone(262, music.beat(BeatFraction.Half))
-})
-function morse_to_string(code:{[key: string]:string, value: string},morse: string): string {
+function morse_to_string(code:{[key: string]: string},morse: string): string {
     let word: string;
     let result = ""
     let words = _py.py_string_split(morse, " ")
-    for (let x of words) {
-        word = x
-        result += code[word] + " "
+    for (let word2 of words) {
+        if (code[word2] != null){
+            result += code[word2] + " "
+        }
     }
-    return result
+    if (result.length != 0){
+        return result
+    }
+    else return ""
 }
-
-radio.onReceivedString(function on_received_string(receivedString: string) {
-    basic.showString(receivedString)
-})
-input.onButtonPressed(Button.B, function on_button_pressed_b() {
-    
-    message = "" + message + "_"
-    music.playTone(220, music.beat(BeatFraction.Whole))
-})
-input.onGesture(Gesture.Shake, function on_gesture_shake() {
-    
-    message = ""
-})
-input.onLogoEvent(TouchButtonEvent.Pressed, function on_logo_pressed() {
-    radio.sendString(message)
-    basic.showString(message)
-})
-basic.forever(function on_forever() {
-    
+basic.forever(function () {
+	
 })
