@@ -1,42 +1,80 @@
-input.onButtonPressed(Button.A, function () {
-	
+input.onGesture(Gesture.TiltLeft, function () {
+    message = "" + message + "."
+    music.playTone(262, music.beat(BeatFraction.Half))
+})
+input.onButtonPressed(Button.AB, function () {
+    message = "" + message + " "
 })
 radio.onReceivedString(function (receivedString) {
-    music.playTone(262, music.beat(BeatFraction.Sixteenth))
-    led.plot(pointerX, pointerY)
+    basic.showString(receivedString)
+})
+input.onGesture(Gesture.Shake, function () {
+    basic.showLeds(`
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        . . . . .
+        `)
+    music.playMelody("F F G A - - - - ", 225)
+    message = ""
+})
+input.onGesture(Gesture.TiltRight, function () {
+    message = "" + message + "_"
+    music.playTone(220, music.beat(BeatFraction.Whole))
 })
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
-    pointerX = 0
-    images.createBigImage(`
-        # . . . # . . . . .
-        . # . # . . . . . .
-        . . # . . . . . . .
-        . # . # . . . . . .
-        # . . . # . . . . .
-        `).scrollImage(1, 50)
-})
-let pointerY = 0
-let pointerX = 0
-pointerX = 0
-pointerY = 0
-radio.setGroup(1)
-basic.showLeds(`
-    # . . . .
-    . # . . .
-    . . # . .
-    . . . . .
-    . . . . .
-    `)
-loops.everyInterval(1000, function () {
-    pointerX += 1
-    if (pointerX >= 5) {
-        pointerX = 0
-        pointerY += 1
+    let finalmessage = morse_to_string(code,message)
+if (finalmessage.length != 0) {
+        radio.sendString(finalmessage)
+        basic.showString(message)
+    } else {
+        basic.showString("error")
     }
 })
+let message = ""
+let code = {
+    "._" : "A",
+    "_..." : "B",
+    "_._." : "C",
+    "_.." : "D",
+    "." : "E",
+    ".._." : "F",
+    "__." : "G",
+    "...." : "H",
+    ".." : "I",
+    ".___" : "J",
+    "_._" : "K",
+    "._.." : "L",
+    "__" : "M",
+    "_." : "N",
+    "___" : "O",
+    ".__." : "P",
+    "__._" : "Q",
+    "._." : "R",
+    "..." : "S",
+    "_" : "T",
+    ".._" : "U",
+    "..._" : "V",
+    ".__" : "W",
+    "_.._" : "X",
+    "_.__" : "Y",
+    "__.." : "Z",
+}
+function morse_to_string(code:{[key: string]: string},morse: string): string {
+    let word: string;
+    let result = ""
+    let words = _py.py_string_split(morse, " ")
+    for (let word2 of words) {
+        if (code[word2] != null){
+            result += code[word2] + " "
+        }
+    }
+    if (result.length != 0){
+        return result
+    }
+    else return ""
+}
 basic.forever(function () {
-    while (input.buttonIsPressed(Button.A)) {
-        music.playTone(262, music.beat(BeatFraction.Sixteenth))
-        radio.sendString("")
-    }
+	
 })
